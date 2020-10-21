@@ -243,18 +243,21 @@ access token."
                                  :port port))
         (code-res nil)
         (state-res nil))
-    (hunchentoot:start acceptor)
-    (hunchentoot:define-easy-handler
-        (oauth :uri "/oauth") (code state)
-      (setf (hunchentoot:content-type*) "text/plain")
-      (setf code-res code)
-      (setf state-res state)
-      (format nil "Success"))
-    (loop
-      (when code-res
-        (hunchentoot:stop acceptor)
-        (return (list (cons "code" code-res)
-                      (cons "state" state-res)))))))
+    (unwind-protect
+         (progn 
+           (hunchentoot:start acceptor)
+           (hunchentoot:define-easy-handler
+               (oauth :uri "/oauth") (code state)
+             (setf (hunchentoot:content-type*) "text/plain")
+             (setf code-res code)
+             (setf state-res state)
+             (format nil "Success"))
+           (loop
+             (when code-res
+               (return (list (cons "code" code-res)
+                             (cons "state" state-res))))))
+      (progn
+        (hunchentoot:stop acceptor)))))
     
    
 (defun oauth2/request-auth-code/browser (auth-server client scopes)
