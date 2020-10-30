@@ -136,19 +136,13 @@
 
 (defun reset-from-json! (oauth who now json-string)
   "Tool to update the oauth2 object"
-  (let* ((json (jsown:parse json-string))
-         (new-access-token (jsown:val json "access_token"))
-         (new-token-type (jsown:val json "token_type"))
-         (new-refresh-token (cdr (assoc "refresh_token"
-                                        (cdr json)
-                                        :test #'string=)))
-         (new-scope (or (cdr (assoc "scope"
-                                    (cdr json)
-                                    :test #'string=))
+  (let* ((json (json:decode-json-from-string json-string))
+         (new-access-token (cdr (assoc :access--token json)))
+         (new-token-type (cdr (assoc :token--type json)))
+         (new-refresh-token (cdr (assoc :refresh--token json)))
+         (new-scope (or (cdr (assoc :scope json))
                         ""))
-         (new-expires-in (or (cdr (assoc "expires_in"
-                                         (cdr json)
-                                         :test #'string=))
+         (new-expires-in (or (cdr (assoc :expires--in json))
                              'inf+)))
     (unless (string-equal new-token-type "Bearer")
       (error (format nil "~a: unsupported token type ~a"
