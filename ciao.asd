@@ -8,7 +8,7 @@
   :serial t
   :depends-on (#:hunchentoot
                #:dexador
-               #:jsown
+               #:cl-json
                #:cl-ppcre
                #:trivial-open-browser)
   :components ((:file "package")
