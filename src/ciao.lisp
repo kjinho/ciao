@@ -1,5 +1,22 @@
 ;;;; ciao.lisp
-
+(defpackage #:ciao
+  (:use #:cl)
+  (:export
+   :oauth2-auth-server
+   :oauth2-client
+   :oauth2
+   :get-auth-request-url
+   ;; :get-client-id
+   ;; :get-scopes
+   :get-access-token
+   :get-refresh-token
+   :headers
+   :oauth2/auth-code
+   :oauth2/refresh-token
+   :oauth2/request-auth-code/browser
+   :*OOB-uri*
+   :*google-auth-server*
+   ))
 (in-package #:ciao)
 
 (defclass oauth2-auth-server ()
@@ -52,7 +69,11 @@
     :initform 'inf+
     :reader get-expiration)))
 
-(defparameter *OOB-uri* "urn:ietf:wg:oauth:2.0:oob")
+(defparameter *OOB-uri* "urn:ietf:wg:oauth:2.0:oob"
+  "From Google: \"This value indicates that Google's authorization server
+should return the authorization code in the browser's title bar. This
+option is useful if the client cannot listen on an HTTP port without
+significant modifications to the client.\"")
 
 (defparameter *google-auth-server*
   (make-instance 'oauth2-auth-server
@@ -63,7 +84,9 @@
                  :tokeninfo-url
                  "https://www.googleapis.com/oauth2/v1/tokeninfo"
                  :revoke-url
-                 "https://accounts.google.com/o/oauth2/revoke"))
+                 "https://accounts.google.com/o/oauth2/revoke")
+  "An instance of an oauth2-auth-server object with information
+relevant to access Google services.")
 
 ;; oauth2-server functions
 
@@ -255,6 +278,9 @@ access token."
     
    
 (defun oauth2/request-auth-code/browser (auth-server client scopes)
+  "Given an auth-server definition (e.g., *google-auth-server*),
+an auth-client object, and a list of strings defining the scope,
+initiates the authentication process."
   (let ((auth-url (get-auth-request-url auth-server
                                         :client client
                                         :scopes scopes

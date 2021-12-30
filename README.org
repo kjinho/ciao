@@ -1,0 +1,105 @@
+* Ciao - an OAuth 2.0 Client for Common Lisp
+
+*Ciao* provides an easy-to-use OAuth 2.0 client library. It is a port of
+the [[https://docs.racket-lang.org/webapi/oauth2.html][Racket OAuth 2.0 Client]] (package: ~webapi~) to Common Lisp.
+
+** Installation
+
+To install ~ciao~, you should download the repository into your local
+lisp directory (e.g., "~/.roswell/local-projects/", "~/portacle/projects/",
+"~/quicklisp/local-projects/").
+
+The project is not (yet) in Quicklisp.
+
+It has been tested for use with SBCL and CCL on GNU/Linux and SBCL on
+MacOS.
+
+** Usage
+
+The simplest method to obtain authorization from an OAuth 2.0 server is
+to use ~oauth2/request-auth-code/browser~, which opens up a browser window
+to get approval and returns an ~oauth2~ object, which represents a client
+authorized to access some set of resources.
+
+#+BEGIN_SRC lisp
+  ;; load the system
+  (asdf:load-system "ciao")
+
+  ;; create a parameter *oauth-ojb* and assign the return value
+  (defparameter *oauth-obj*)
+
+  ;; assign the value of oauth2/request-auth-code/browser to *oauth-obj*
+  (setf *oauth-obj*
+        (ciao:oauth2/request-auth-code/browser
+         ciao:*google-auth-server*
+         (make-instance 'ciao:oauth2-client :secret "XXXXXXXXXXXXXXXXXXXX"
+                                            :id     "XXXXXXXXXXXXXXXXXXXX")
+         '("https://www.googleapis.com/auth/drive.readonly")))
+
+  ;; use dexador to request a file's information
+  (dex:get "https://www.googleapis.com/drive/v3/files/XXXXXXXXXXXXXXXXXXX"
+           :headers (ciao:headers *oauth-obj*))
+#+END_SRC
+
+In the above example, ~id~ and ~secret~ represent the client authentication
+information from Google.
+
+** API
+
+Exported symbols:
+
+- classes
+  - :oauth2-auth-server
+  - :oauth2-client
+  - :oauth2
+- functions and methods
+  - :get-auth-request-url
+  - :get-access-token
+  - :get-refresh-token
+  - :headers
+  - :oauth2/auth-code
+  - :oauth2/refresh-token
+  - :oauth2/request-auth-code/browser
+- parameters
+  - :*OOB-uri*
+  - :*google-auth-server*
+
+** License
+
+Consistent with the Racket OAuth 2.0 Client, this package is licensed
+under the the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation.
+
+Copyright 2020 Jin-Ho King
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License and GNU Lesser General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License and
+GNU Lesser General Public License along with this program.  If not,
+see <http://www.gnu.org/licenses/>.
+
+The original racket code is copyright 2011-2012 Ryan Culpepper
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License and GNU Lesser General Public License for more
+details.
+
+You should have received a copy of the GNU General Public License and
+GNU Lesser General Public License along with this program.  If not,
+see <http://www.gnu.org/licenses/>.
