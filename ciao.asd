@@ -8,7 +8,6 @@
   :depends-on (#:hunchentoot
                #:dexador
                #:cl-json
-               #:cl-ppcre
                #:trivial-open-browser)
   :components ((:module "src"
                 :components 

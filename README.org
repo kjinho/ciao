@@ -9,10 +9,19 @@ To install ~ciao~, you should download the repository into your local
 lisp directory (e.g., "~/.roswell/local-projects/", "~/portacle/projects/",
 "~/quicklisp/local-projects/").
 
-The project is not (yet) in Quicklisp.
+It has been tested for use on [[https://cloud.google.com/docs/authentication][Google]] and [[https://app.clio.com/api/v4/documentation][Clio]] APIs with SBCL and CCL
+on GNU/Linux and SBCL on MacOS.
 
-It has been tested for use with SBCL and CCL on GNU/Linux and SBCL on
-MacOS.
+*** Notable Dependencies
+
+All of ~ciao~'s dependencies are available on [[https://www.quicklisp.org/beta/][Quicklisp]].
+
+~ciao~ uses [[https://github.com/fukamachi/dexador][~dexador~]] for http requests and [[https://common-lisp.net/project/cl-json/cl-json.html][~cl-json~]] to parse JSON
+responses. To retrieve responses from the OAuth server, ~ciao~ starts a
+[[https://edicl.github.io/hunchentoot/][~hunchentoot~]] server that blocks the thread until it receives a
+response from the OAuth server. Finally, ~ciao~ uses
+[[https://github.com/eudoxia0/trivial-open-browser][~trivial-open-browser~]] to open a web browser to obtain client
+authorization.
 
 ** Usage
 

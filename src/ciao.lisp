@@ -16,6 +16,7 @@
    :oauth2/request-auth-code/browser
    :*OOB-uri*
    :*google-auth-server*
+   :*clio-auth-server*
    ))
 (in-package #:ciao)
 
@@ -88,6 +89,17 @@ significant modifications to the client.\"")
   "An instance of an oauth2-auth-server object with information
 relevant to access Google services.")
 
+(defparameter *clio-auth-server*
+  (make-instance 'oauth2-auth-server
+                 :auth-url
+                 "https://app.clio.com/oauth/authorize"
+                 :token-url
+                 "https://app.clio.com/oauth/token"
+                 :revoke-url
+                 "https://app.clio.com/oauth/deauthorize")
+  "An instance of an oauth2-auth-server object with information
+relevant to access Clio services")
+
 ;; oauth2-server functions
 
 (defun get-auth-request-url (auth-server
@@ -102,13 +114,16 @@ relevant to access Google services.")
    :defaults
    (get-auth-url auth-server)
    :query
-   (apply #'list
-          (cons "response_type" "code")
-          (cons "client_id" (get-id client))
-          (cons "redirect_uri" redirect-uri)
-          (cons "scope" (format nil "~{~A~^ ~}" scopes))
-          (cons "state" (or state ""))
-          extra-parameters)))
+   (delete nil
+           (apply #'list
+                  (cons "response_type" "code")
+                  (cons "client_id" (get-id client))
+                  (cons "redirect_uri" redirect-uri)
+                  (when (not (null scopes))
+                    (cons "scope" (format nil "~{~A~^ ~}" scopes)))
+                  (when (not (null state))
+                    (cons "state" (or state "")))
+                  extra-parameters))))
 
 ;; oauth2 object functions
 
@@ -157,6 +172,15 @@ relevant to access Google services.")
         (json (refresh-token/json oauth))); :who who)))
     (reset-from-json! oauth who now json)))
 
+(defun string-split (substr mainstr)
+  "Returns a list of strings that constitute mainstr split
+wherever substr occurs"
+  (loop with l = (length substr)
+        for i = 0 then (+ j l)
+        as j = (search substr mainstr :start2 i)
+        collect (subseq mainstr i j)
+        while j))
+
 (defun reset-from-json! (oauth who now json-string)
   "Tool to update the oauth2 object"
   (let* ((json (json:decode-json-from-string json-string))
@@ -179,7 +203,7 @@ relevant to access Google services.")
       (setf (slot-value oauth 'expiration)
             (+ now new-expires-in)))
     (unless (equal new-scope "")
-      (setf (slot-value oauth 'scopes) (ppcre:split " +" new-scope)))
+      (setf (slot-value oauth 'scopes) (string-split " +" new-scope)))
     nil
     ))
                                 
@@ -277,7 +301,8 @@ access token."
         (hunchentoot:stop acceptor)))))
     
    
-(defun oauth2/request-auth-code/browser (auth-server client scopes)
+(defun oauth2/request-auth-code/browser (auth-server client &optional
+                                                              (scopes nil))
   "Given an auth-server definition (e.g., *google-auth-server*),
 an auth-client object, and a list of strings defining the scope,
 initiates the authentication process."
