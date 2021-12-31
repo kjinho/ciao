@@ -1,7 +1,9 @@
 * Ciao - an OAuth 2.0 Client for Common Lisp
 
-*Ciao* provides an easy-to-use OAuth 2.0 client library. It is a port of
-the [[https://docs.racket-lang.org/webapi/oauth2.html][Racket OAuth 2.0 Client]] (package: ~webapi~) to Common Lisp.
+*Ciao* is an easy-to-use Common Lisp OAuth 2.0 client library. 
+It is a port of the 
+[[https://docs.racket-lang.org/webapi/oauth2.html][Racket OAuth 2.0 Client]]
+(package: ~webapi~) to Common Lisp.
 
 ** Installation
 
