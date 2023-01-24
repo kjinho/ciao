@@ -302,17 +302,19 @@ access token."
     
    
 (defun oauth2/request-auth-code/browser (auth-server client &optional
-                                                              (scopes nil))
+                                                              (scopes nil)
+                                         &key (port 5000))
   "Given an auth-server definition (e.g., *google-auth-server*),
 an auth-client object, and a list of strings defining the scope,
 initiates the authentication process."
-  (let ((auth-url (get-auth-request-url auth-server
-                                        :client client
-                                        :scopes scopes
-                                        :redirect-uri
-                                        "http://127.0.0.1:5000/oauth")))
+  (let* ((redirect-uri (format nil "http://127.0.0.1:~a/oauth" port))
+         (auth-url (get-auth-request-url auth-server
+                                         :client client
+                                         :scopes scopes
+                                         :redirect-uri
+                                         redirect-uri)))
     (trivial-open-browser:open-browser
      (quri:render-uri auth-url))
-    (let ((auth-code (cdr (assoc "code" (servlet) :test #'string-equal))))
+    (let ((auth-code (cdr (assoc "code" (servlet :port port) :test #'string-equal))))
       (oauth2/auth-code auth-server client auth-code
-                        :redirect-uri "http://127.0.0.1:5000/oauth"))))
+                        :redirect-uri redirect-uri))))
