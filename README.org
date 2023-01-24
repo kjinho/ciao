@@ -37,7 +37,7 @@ authorized to access some set of resources.
   (asdf:load-system "ciao")
 
   ;; create a parameter *oauth-ojb* and assign the return value
-  (defparameter *oauth-obj*)
+  (defparameter *oauth-obj* nil)
 
   ;; assign the value of oauth2/request-auth-code/browser to *oauth-obj*
   (setf *oauth-obj*
@@ -45,7 +45,7 @@ authorized to access some set of resources.
          ciao:*google-auth-server*
          (make-instance 'ciao:oauth2-client :secret "XXXXXXXXXXXXXXXXXXXX"
                                             :id     "XXXXXXXXXXXXXXXXXXXX")
-         '("https://www.googleapis.com/auth/drive.readonly")))
+         :scope '("https://www.googleapis.com/auth/drive.readonly")))
 
   ;; use dexador to request a file's information
   (dex:get "https://www.googleapis.com/drive/v3/files/XXXXXXXXXXXXXXXXXXX"

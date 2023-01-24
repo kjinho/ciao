@@ -301,9 +301,10 @@ access token."
         (hunchentoot:stop acceptor)))))
     
    
-(defun oauth2/request-auth-code/browser (auth-server client &optional
-                                                              (scopes nil)
-                                         &key (port 5000))
+(defun oauth2/request-auth-code/browser (auth-server client
+                                         &key
+                                           (scopes nil)
+                                           (port 5000))
   "Given an auth-server definition (e.g., *google-auth-server*),
 an auth-client object, and a list of strings defining the scope,
 initiates the authentication process."
