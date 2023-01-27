@@ -45,7 +45,7 @@ authorized to access some set of resources.
          ciao:*google-auth-server*
          (make-instance 'ciao:oauth2-client :secret "XXXXXXXXXXXXXXXXXXXX"
                                             :id     "XXXXXXXXXXXXXXXXXXXX")
-         :scope '("https://www.googleapis.com/auth/drive.readonly")))
+         :scopes '("https://www.googleapis.com/auth/drive.readonly")))
 
   ;; use dexador to request a file's information
   (dex:get "https://www.googleapis.com/drive/v3/files/XXXXXXXXXXXXXXXXXXX"
