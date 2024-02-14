@@ -136,7 +136,8 @@ relevant to access Clio services")
                            (re-acquire? t)
                            (who #'get-access-token))
   "Returns the access-token for an oauth2 object"
-  (cond ((< (get-universal-time) (get-expiration oauth))
+  (cond (((or (eq 'inf+ (get-expiration oauth)) 
+              (< (get-universal-time) (get-expiration oauth)))
          (slot-value oauth 'access-token))
         (re-acquire?
          (re-acquire-token! oauth :who who)
